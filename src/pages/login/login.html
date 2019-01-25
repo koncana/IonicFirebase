@@ -1,0 +1,25 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>Login</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <form [formGroup]="myForm" novalidate>
+    <ion-item>
+      <ion-label floating>Email Address</ion-label>
+      <ion-input type="email" formControlName="email" id="email" [class.invalid]="!myForm.controls.email.valid && myForm.controls.email.dirty"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Password</ion-label>
+      <ion-input type="password" formControlName="password" id="password" [class.invalid]="!myForm.controls.password.valid && myForm.controls.password.dirty"></ion-input>
+    </ion-item>
+    <button ion-button type="submit" [disabled]="myForm.invalid" (click)="login(user)">Login</button>
+
+    <button ion-button (click)="register()">Register</button>
+  </form>
+</ion-content>

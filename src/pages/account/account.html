@@ -1,0 +1,65 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Account</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <form [formGroup]="myForm" novalidate>
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Nickname</ion-label>
+        <ion-input type="text" formControlName="nickname" [class.invalid]="!myForm.controls.nickname.valid && myForm.controls.nickname.dirty"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Age</ion-label>
+        <ion-input type="number" formControlName="age" [class.invalid]="!myForm.controls.age.valid && myForm.controls.age.dirty"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Country</ion-label>
+        <ion-select formControlName="country" [class.invalid]="!myForm.controls.country.valid && myForm.controls.country.dirty">
+          <ion-option value="spain">Spain</ion-option>
+          <ion-option value="france">France</ion-option>
+          <ion-option value="italy">Italy</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-row radio-group formControlName="sex" >
+        <ion-col>
+          <ion-item>
+            <ion-label>Woman</ion-label>
+            <ion-radio value="woman"></ion-radio>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label>Man</ion-label>
+            <ion-radio value="man"></ion-radio>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label>Other</ion-label>
+            <ion-radio value="other"></ion-radio>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-item>
+          <ion-label>Confirm </ion-label>
+          <ion-toggle [checked]="isToggled" (ionChange)="notify()"></ion-toggle>
+        </ion-item>
+    </ion-list>
+    <div padding>
+      <button ion-button block type="submit" (click)="saveData()" [disabled]="myForm.invalid || !isToggled">Save</button>
+    </div>
+  </form>
+  <!-- <ion-list>
+    <ion-item *ngFor="let item of items" (click)="editItem(item.key)">
+      {{item.name}}
+    </ion-item>
+  </ion-list> -->
+
+  <!-- <button ion-button (click)="back()">Back</button> -->
+</ion-content>  
