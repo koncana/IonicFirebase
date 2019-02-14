@@ -10,7 +10,8 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { FIREBASE_CONFIG } from "./app.firebase.config";
 import { AngularFireAuthModule } from 'angularfire2/auth';
-
+import { AngularFireStorageModule } from 'angularfire2/storage';
+import { Camera } from '@ionic-native/camera';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(FIREBASE_CONFIG),
     AngularFireAuthModule,
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    AngularFireStorageModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -29,6 +31,7 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
   ],
   providers: [
     StatusBar,
+    Camera,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]

@@ -26,7 +26,7 @@
           <ion-option value="italy">Italy</ion-option>
         </ion-select>
       </ion-item>
-      <ion-row radio-group formControlName="sex" >
+      <ion-row radio-group formControlName="sex">
         <ion-col>
           <ion-item>
             <ion-label>Woman</ion-label>
@@ -47,19 +47,20 @@
         </ion-col>
       </ion-row>
       <ion-item>
-          <ion-label>Confirm </ion-label>
-          <ion-toggle [checked]="isToggled" (ionChange)="notify()"></ion-toggle>
-        </ion-item>
+        <ion-label>Confirm </ion-label>
+        <ion-toggle [checked]="isToggled" (ionChange)="notify()"></ion-toggle>
+      </ion-item>
+      <img src="" id="donloaded-image" alt="image"/>
+      <button ion-button (click)="takePhoto()">Take Photo</button>
     </ion-list>
     <div padding>
       <button ion-button block type="submit" (click)="saveData()" [disabled]="myForm.invalid || !isToggled">Save</button>
     </div>
   </form>
-  <!-- <ion-list>
-    <ion-item *ngFor="let item of items" (click)="editItem(item.key)">
-      {{item.name}}
-    </ion-item>
-  </ion-list> -->
 
-  <!-- <button ion-button (click)="back()">Back</button> -->
-</ion-content>  
+  <!-- <ion-button color="primary" (click)="choosePicture()">Choose picture from Gallery</ion-button> -->
+  <img [src]="base64Image" *ngIf="base64Image" />
+  <div *ngFor="let image of images">
+    <img src="{{image}}" />
+  </div>
+</ion-content>

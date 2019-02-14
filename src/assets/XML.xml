@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<rss version="2.0">
+ <channel>
+ <title>RSS Guia Facil</title>
+ <link> http://es.geocities.com/rss_guia_facil.html</link>
+ <description>Guia facil y sencilla sobre el formato RSS</description>
+ <item>
+ <title>Que es el RSS</title>
+ <link>http://es.geocities.com/rss_guia_facil/que_es_rss.html</link>
+ <description>Visita la Guia Facil del RSS para saber que es el formato RSS</description>
+ </item>
+ <item>
+ <title>Para que sirve el RSSl</title>
+ <link> http://es.geocities.com/rss_guia_facil/para_que_sirve_rss.html </link>
+ <description> Visita la Guia Facil del RSS y conoce para que sirve el formato RSS
+</description>
+ </item>
+ <item>
+ <title>Como se usa el RSS</title>
+ <link> http://es.geocities.com/rss_guia_facil/como_se_usa_rss.html </link>
+ <description> Visita la Guia Facil del RSS para saber como usar el formato RSS
+ </description>
+ </item>
+</channel>
+</rss>

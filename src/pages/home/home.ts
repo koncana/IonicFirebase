@@ -5,6 +5,7 @@ import { User } from '../../models/user';
 import * as firebase from 'firebase';
 import { snapshotToArray } from "../../app/app.firebase.config";
 import { snapshotChanges } from 'angularfire2/database';
+import { AngularFireStorage, AngularFireUploadTask } from 'angularfire2/storage';
 
 @IonicPage()
 @Component({
@@ -15,29 +16,33 @@ export class HomePage {
 
   user = {} as User;
   items = [];
-  ref = firebase.database().ref('items/');
+  account = firebase.auth().currentUser;
+  ref = firebase.database().ref(`accounts/${this.account.uid}`);
   inputText: string = '';
-  countryList: Array<any>;
-  loadedCountryList: Array<any>;
-  countryRef: firebase.database.Reference;
+  // countryList: Array<any>;
+  // loadedCountryList: Array<any>;
+  // countryRef: firebase.database.Reference;
 
   constructor(private afAuth: AngularFireAuth, private toast: ToastController,
-    public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController) {
+    public navCtrl: NavController, public navParams: NavParams,
+    private alertCtrl: AlertController) {
     this.ref.on('value', resp => {
       this.items = snapshotToArray(resp);
     });
-    this.countryRef = firebase.database().ref('/items');
-    this.countryRef.on('value', countryList => {
-      let countries = [];
-      countryList.forEach(country => {
-        countries.push(country.val());
-        return false;
-      });
+    // this.countryRef = firebase.database().ref('/items');
+    // this.countryRef.on('value', countryList => {
+    //   let countries = [];
+    //   countryList.forEach(country => {
+    //     countries.push(country.val());
+    //     return false;
+    //   });
 
-      this.countryList = countries;
-      this.loadedCountryList = countries;
-    });
+    //   this.countryList = countries;
+    //   this.loadedCountryList = countries;
+    // });
   }
+
+
 
   // initializeItems(): void {
   //   this.countryList = this.loadedCountryList;
@@ -95,14 +100,14 @@ export class HomePage {
           text: 'Edit',
           handler: data => {
             if (data.name !== undefined && data.name.length > 0) {
-              firebase.database().ref('items/' + key).update({ name: data.name });
+              firebase.database().ref(`accounts/${this.account.uid}/` + key).update({ name: data.name });
             }
           }
         },
         {
           text: 'Delete',
-          handler: data => {
-            firebase.database().ref('items/' + key).remove();
+          handler: () => {
+            firebase.database().ref(`accounts/${this.account.uid}/` + key).remove();
           }
         }
       ]
@@ -122,6 +127,7 @@ export class HomePage {
           message: `Could not find authentication`,
           duration: 3000
         }).present();
+
       }
     })
   }
@@ -130,6 +136,7 @@ export class HomePage {
     this.afAuth.authState.first().subscribe((authState) => {
       authState.delete();
     });
+    firebase.database().ref(`accounts/${this.account.uid}`).remove();
     this.navCtrl.setRoot('LoginPage');
   }
 
@@ -142,7 +149,12 @@ export class HomePage {
       console.error(e);
     }
   }
+
   accountDetails() {
     this.navCtrl.push('AccountPage');
+  }
+
+  annoucements(){
+    this.navCtrl.push('NewsPage');
   }
 }

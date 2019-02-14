@@ -13,7 +13,7 @@ export class LoginPage {
 
   myForm: FormGroup;
   user = {} as User;
-  constructor(private afAuth: AngularFireAuth, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, private toast: ToastController ) {
+  constructor(private afAuth: AngularFireAuth, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, private toast: ToastController) {
     this.myForm = formBuilder.group({
       email: ['', Validators.compose([Validators.pattern('.+@[a-z0-9]+\\.[a-z]+'), Validators.required])],
       password: ['', Validators.compose([Validators.pattern('[a-zA-Z0-9 ]+'), Validators.required])]
@@ -24,7 +24,11 @@ export class LoginPage {
     try {
       const result = await this.afAuth.auth.signInWithEmailAndPassword(this.myForm.value.email, this.myForm.value.password);
       if (result) {
-        this.navCtrl.setRoot('HomePage');
+        // if (this.myForm.value.email === "admin@admin.com") {
+        //   this.navCtrl.setRoot('AdminPage');
+        // } else {
+          this.navCtrl.setRoot('HomePage');
+        //}
       }
     } catch (e) {
       this.toast.create({

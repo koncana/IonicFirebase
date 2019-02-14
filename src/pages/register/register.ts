@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angu
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { User } from '../../models/user';
 import { AngularFireAuth } from 'angularfire2/auth';
+import * as firebase from 'firebase';
 
 @IonicPage()
 @Component({
@@ -13,6 +14,7 @@ export class RegisterPage {
 
   user = {} as User;
   myForm: FormGroup;
+  
   constructor(private afAuth: AngularFireAuth, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, private toast: ToastController) {
     this.myForm = formBuilder.group({
       email: ['', Validators.compose([Validators.maxLength(30), Validators.pattern('.+@[a-z]+\\.[a-z]+'), Validators.required])],
