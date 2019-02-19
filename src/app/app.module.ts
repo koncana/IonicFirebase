@@ -12,6 +12,7 @@ import { FIREBASE_CONFIG } from "./app.firebase.config";
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { Camera } from '@ionic-native/camera';
+import { ImagePicker } from '@ionic-native/image-picker';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { Camera } from '@ionic-native/camera';
     StatusBar,
     Camera,
     SplashScreen,
+    ImagePicker,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })

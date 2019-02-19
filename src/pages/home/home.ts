@@ -6,6 +6,7 @@ import * as firebase from 'firebase';
 import { snapshotToArray } from "../../app/app.firebase.config";
 import { snapshotChanges } from 'angularfire2/database';
 import { AngularFireStorage, AngularFireUploadTask } from 'angularfire2/storage';
+import { Camera, CameraOptions } from '@ionic-native/camera';
 
 @IonicPage()
 @Component({
@@ -17,62 +18,17 @@ export class HomePage {
   user = {} as User;
   items = [];
   account = firebase.auth().currentUser;
-  ref = firebase.database().ref(`accounts/${this.account.uid}`);
+  ref = firebase.database().ref(`accounts/${this.account.uid}/messages`);
   inputText: string = '';
-  // countryList: Array<any>;
-  // loadedCountryList: Array<any>;
-  // countryRef: firebase.database.Reference;
+  refImage = firebase.database().ref(`accounts/${this.account.uid}/details`);
 
   constructor(private afAuth: AngularFireAuth, private toast: ToastController,
     public navCtrl: NavController, public navParams: NavParams,
-    private alertCtrl: AlertController) {
+    private alertCtrl: AlertController, private camera: Camera) {
     this.ref.on('value', resp => {
       this.items = snapshotToArray(resp);
     });
-    // this.countryRef = firebase.database().ref('/items');
-    // this.countryRef.on('value', countryList => {
-    //   let countries = [];
-    //   countryList.forEach(country => {
-    //     countries.push(country.val());
-    //     return false;
-    //   });
-
-    //   this.countryList = countries;
-    //   this.loadedCountryList = countries;
-    // });
   }
-
-
-
-  // initializeItems(): void {
-  //   this.countryList = this.loadedCountryList;
-  // }
-
-  // getItems(searchbar) {
-  //   // Reset items back to all of the items
-  //   this.initializeItems();
-
-  //   // set q to the value of the searchbar
-  //   var q = searchbar.srcElement.value;
-
-
-  //   // if the value is an empty string don't filter the items
-  //   if (!q) {
-  //     return;
-  //   }
-
-  //   this.countryList = this.countryList.filter((v) => {
-  //     if (v.name && q) {
-  //       if (v.name.toLowerCase().indexOf(q.toLowerCase()) > -1) {
-  //         return true;
-  //       }
-  //       return false;
-  //     }
-  //   });
-
-  //   console.log(q, this.countryList.length);
-
-  // }
 
   addItem(item) {
     if (item != undefined && item !== null) {
@@ -80,6 +36,121 @@ export class HomePage {
       newItem.set(item);
       this.inputText = '';
     }
+  }
+
+  async takePhoto(key) {
+    try {
+      const options: CameraOptions = {
+        quality: 50,
+        targetHeight: 50,
+        targetWidth: 50,
+        destinationType: this.camera.DestinationType.DATA_URL,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        correctOrientation: true
+      }
+
+      const result = await this.camera.getPicture(options);
+
+      const image = `data:image/jpeg;base64,${result}`;
+
+      var uploadTask = firebase.storage().ref(`pictures/${this.account.uid}/messages/` + key).child('item').putString(image, 'data_url');
+
+      uploadTask.on('state_changed', function (snapshot) {
+        // Observe state change events such as progress, pause, and resume
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (uploadTask.snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+        }
+      }, function (error) {
+        // Handle unsuccessful uploads
+      }, () => {
+        // Handle successful uploads on complete
+        // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          console.log('File available at: ', downloadURL);
+          let newRef = firebase.database().ref(`accounts/${this.account.uid}/messages/` + key).update({ image: downloadURL });
+        });
+      });
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  editPhoto(key) {
+    let alert = this.alertCtrl.create({
+      title: 'Edit Photo',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Change Photo',
+          handler: async () => {
+            try {
+              const options: CameraOptions = {
+                quality: 50,
+                targetHeight: 100,
+                targetWidth: 100,
+                destinationType: this.camera.DestinationType.DATA_URL,
+                encodingType: this.camera.EncodingType.JPEG,
+                mediaType: this.camera.MediaType.PICTURE,
+                correctOrientation: true
+              }
+
+              const result = await this.camera.getPicture(options);
+
+              const image = `data:image/jpeg;base64,${result}`;
+
+              var uploadTask = firebase.storage().ref(`pictures/${this.account.uid}/messages/`+key).child('item').putString(image, 'data_url');
+
+              uploadTask.on('state_changed', function (snapshot) {
+                // Observe state change events such as progress, pause, and resume
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                var progress = (uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                switch (uploadTask.snapshot.state) {
+                  case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log('Upload is paused');
+                    break;
+                  case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log('Upload is running');
+                    break;
+                }
+              }, function (error) {
+                // Handle unsuccessful uploads
+              }, () => {
+                // Handle successful uploads on complete
+                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                  console.log('File available at: ', downloadURL);
+                  firebase.database().ref(`accounts/${this.account.uid}/messages/` + key).update({ image: downloadURL });
+                });
+              });
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        },
+        {
+          text: 'Delete Photo',
+          handler: () => {
+            firebase.database().ref(`accounts/${this.account.uid}/messages/` + key).update({ image: "" });
+            firebase.storage().ref(`pictures/${this.account.uid}/messages/` + key).delete();
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 
   editItem(key) {
@@ -100,14 +171,20 @@ export class HomePage {
           text: 'Edit',
           handler: data => {
             if (data.name !== undefined && data.name.length > 0) {
-              firebase.database().ref(`accounts/${this.account.uid}/` + key).update({ name: data.name });
+              firebase.database().ref(`accounts/${this.account.uid}/messages/` + key).update({ name: data.name });
             }
+          }
+        },
+        {
+          text: 'Add Photo',
+          handler: data => {
+            this.takePhoto(key);
           }
         },
         {
           text: 'Delete',
           handler: () => {
-            firebase.database().ref(`accounts/${this.account.uid}/` + key).remove();
+            firebase.database().ref(`accounts/${this.account.uid}/messages/` + key).remove();
           }
         }
       ]
@@ -133,10 +210,12 @@ export class HomePage {
   }
 
   deleteAccount() {
+
+    firebase.storage().ref(`pictures/${this.account.uid}/myPhoto`).delete();
+    firebase.database().ref(`accounts/${this.account.uid}`).remove();
     this.afAuth.authState.first().subscribe((authState) => {
       authState.delete();
     });
-    firebase.database().ref(`accounts/${this.account.uid}`).remove();
     this.navCtrl.setRoot('LoginPage');
   }
 
@@ -154,7 +233,7 @@ export class HomePage {
     this.navCtrl.push('AccountPage');
   }
 
-  annoucements(){
+  annoucements() {
     this.navCtrl.push('NewsPage');
   }
 }

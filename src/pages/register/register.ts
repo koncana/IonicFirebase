@@ -14,7 +14,7 @@ export class RegisterPage {
 
   user = {} as User;
   myForm: FormGroup;
-  
+
   constructor(private afAuth: AngularFireAuth, public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder, private toast: ToastController) {
     this.myForm = formBuilder.group({
       email: ['', Validators.compose([Validators.maxLength(30), Validators.pattern('.+@[a-z]+\\.[a-z]+'), Validators.required])],
@@ -25,12 +25,14 @@ export class RegisterPage {
   async register() {
     try {
       const result = await this.afAuth.auth.createUserWithEmailAndPassword(this.myForm.value.email, this.myForm.value.password);
-      this.toast.create({
-        message: `Register succesful`,
-        duration: 3000
-      }).present();
-      this.navCtrl.pop();
-      console.log(result);
+      const resultSignIn = await this.afAuth.auth.signInWithEmailAndPassword(this.myForm.value.email, this.myForm.value.password);
+      if (resultSignIn) {
+        this.toast.create({
+          message: `Register succesful`,
+          duration: 3000
+        }).present();
+        this.navCtrl.push('RegisterAccountDetailsPage');
+      }
     } catch (e) {
       this.toast.create({
         message: `Error`,

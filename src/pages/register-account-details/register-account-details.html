@@ -1,37 +1,11 @@
 <ion-header>
-
   <ion-navbar>
-    <ion-title>Account Details</ion-title>
+    <ion-title>Register Account Details</ion-title>
   </ion-navbar>
-
 </ion-header>
 
-
 <ion-content padding>
-  <ion-list>
-    <ion-item-sliding *ngFor="let item of items">
-      <ion-item (click)=editName(item.key)>
-        Nickname: {{item.nickname}}
-      </ion-item>
-      <ion-item (click)=editAge(item.key)>
-        Age: {{item.age}}
-      </ion-item>
-      <ion-item (click)=editSex(item.key)>
-        Sex: {{item.sex}}
-      </ion-item>
-      <ion-item (click)=editCountry(item.key)>
-        Country: {{item.country}}
-      </ion-item>
-      <ion-item (click)=editImage(item.key)>
-        Profile image: 
-        <br>
-        <img src={{item.image}}/>
-      </ion-item>
-    </ion-item-sliding>
-  </ion-list>
-
-
-  <!-- <form [formGroup]="myForm" novalidate>
+  <form [formGroup]="myForm" novalidate>
     <ion-list>
       <ion-item>
         <ion-label floating>Nickname</ion-label>
@@ -72,18 +46,18 @@
           </ion-item>
         </ion-col>
       </ion-row>
+      <button ion-button (click)="takePhoto()">Take Photo</button>
+      <button ion-button (click)="choosePicture()">Choose picture from Gallery</button>
+      <br>
+      <img src="{{imageURL}}" />
       <ion-item>
         <ion-label>Confirm </ion-label>
         <ion-toggle [checked]="isToggled" (ionChange)="notify()"></ion-toggle>
       </ion-item>
-      <button ion-button (click)="takePhoto()">Take Photo</button>
-      <br>
-      <img src="{{imageURL}}" />
     </ion-list>
     <div padding>
       <button ion-button block type="submit" (click)="saveData()"
         [disabled]="myForm.invalid || !isToggled || !imageTaken">Save</button>
     </div>
-  </form> -->
-
+  </form>
 </ion-content>

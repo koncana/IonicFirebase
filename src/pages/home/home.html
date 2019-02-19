@@ -7,19 +7,25 @@
 </ion-header>
 
 <ion-content padding>
+  <img src="{{imageURL}}" />
+  <br>
   <ion-input [(ngModel)]="inputText" placeholder="Item name"></ion-input>
   <button ion-button full (click)="addItem({name:inputText})">Add</button>
-  <!-- <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar> -->
   <ion-list>
-    <ion-item *ngFor="let item of items" (click)="editItem(item.key)" >
-      {{item.name}}
+    <ion-item *ngFor="let item of items">
+      <ion-item (click)="editItem(item.key)">
+        {{item.name}}
+      </ion-item>
+      <ion-item (click)="editPhoto(item.key)">
+        <img src="{{item.image}}" />
+      </ion-item>
     </ion-item>
   </ion-list>
   <button ion-button (click)="accountDetails()">Account Details</button>
   <button ion-button (click)="annoucements()">Annoucements</button>
   <button ion-button (click)="logout(user)">Logout</button>
   <button ion-button (click)="deleteAccount()">Delete Account</button>
-  <a type= "aplication/rss+xml" href="../../assets/XML.xml" >
-    <img src="../../assets/imgs/rss.jpg"/>
+  <a type="aplication/rss+xml" href="../../assets/XML.xml">
+    <img src="../../assets/imgs/rss.jpg" height="40px" width="40px" />
   </a>
 </ion-content>
