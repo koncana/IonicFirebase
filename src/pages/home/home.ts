@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ToastController, AlertController } from 'ionic-angular';
+import { NavController, NavParams, ToastController, AlertController, App } from 'ionic-angular';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { User } from '../../models/user';
 import * as firebase from 'firebase';
 import { snapshotToArray } from "../../app/app.firebase.config";
-import { snapshotChanges } from 'angularfire2/database';
-import { AngularFireStorage, AngularFireUploadTask } from 'angularfire2/storage';
 import { Camera, CameraOptions } from '@ionic-native/camera';
+import { NewsPage } from '../news/news';
 
-@IonicPage()
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
@@ -21,10 +19,11 @@ export class HomePage {
   ref = firebase.database().ref(`accounts/${this.account.uid}/messages`);
   inputText: string = '';
   refImage = firebase.database().ref(`accounts/${this.account.uid}/details`);
+  admin: boolean = false;
 
   constructor(private afAuth: AngularFireAuth, private toast: ToastController,
     public navCtrl: NavController, public navParams: NavParams,
-    private alertCtrl: AlertController, private camera: Camera) {
+    private alertCtrl: AlertController, private camera: Camera, private app: App) {
     this.ref.on('value', resp => {
       this.items = snapshotToArray(resp);
     });
@@ -76,7 +75,7 @@ export class HomePage {
         // For instance, get the download URL: https://firebasestorage.googleapis.com/...
         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
           console.log('File available at: ', downloadURL);
-          let newRef = firebase.database().ref(`accounts/${this.account.uid}/messages/` + key).update({ image: downloadURL });
+          firebase.database().ref(`accounts/${this.account.uid}/messages/` + key).update({ image: downloadURL });
         });
       });
 
@@ -99,8 +98,8 @@ export class HomePage {
             try {
               const options: CameraOptions = {
                 quality: 50,
-                targetHeight: 100,
-                targetWidth: 100,
+                targetHeight: 50,
+                targetWidth: 50,
                 destinationType: this.camera.DestinationType.DATA_URL,
                 encodingType: this.camera.EncodingType.JPEG,
                 mediaType: this.camera.MediaType.PICTURE,
@@ -192,8 +191,20 @@ export class HomePage {
     alert.present();
   }
 
+  goAllAccounts(){
+    this.navCtrl.push('AllAccountsPage');
+  }
+
   ionViewDidLoad() {
+    var btnAdmin = document.getElementById("btnAdmin");
     this.afAuth.authState.subscribe(data => {
+      if (data.email === "admin@admin.com") {
+        btnAdmin.style.display = "block";
+        this.admin = true;
+      } else {
+        btnAdmin.style.display = "none";
+        this.admin = false;
+      }
       if (data && data.email && data.uid) {
         this.toast.create({
           message: `Welcome, ${data.email}`,
@@ -204,7 +215,6 @@ export class HomePage {
           message: `Could not find authentication`,
           duration: 3000
         }).present();
-
       }
     })
   }
@@ -216,13 +226,13 @@ export class HomePage {
     this.afAuth.authState.first().subscribe((authState) => {
       authState.delete();
     });
-    this.navCtrl.setRoot('LoginPage');
+    this.app.getRootNav().setRoot('LoginPage');
   }
 
   logout() {
     try {
       this.afAuth.auth.signOut().then(() => {
-        this.navCtrl.setRoot('LoginPage');
+        this.app.getRootNav().setRoot('LoginPage');
       });
     } catch (e) {
       console.error(e);
@@ -234,6 +244,6 @@ export class HomePage {
   }
 
   annoucements() {
-    this.navCtrl.push('NewsPage');
+    this.navCtrl.push(NewsPage);
   }
 }

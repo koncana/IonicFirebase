@@ -2,15 +2,9 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import * as firebase from 'firebase';
-import { AngularFireStorage, AngularFireUploadTask } from 'angularfire2/storage';
-import { AngularFireDatabase } from 'angularfire2/database';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { snapshotToArray } from "../../app/app.firebase.config";
 import { Camera, CameraOptions } from '@ionic-native/camera';
-import { storage } from 'firebase';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { HomePage } from '../home/home';
 import { ImagePicker } from '@ionic-native/image-picker';
+import { TabsPage } from '../tabs/tabs';
 
 
 @IonicPage()
@@ -22,7 +16,7 @@ export class RegisterAccountDetailsPage {
   base64Image: string = null;
   images: any = [];
   myForm: FormGroup;
-  account = firebase.auth().currentUser;;
+  account = firebase.auth().currentUser;
   ref = firebase.database().ref(`accounts/${this.account.uid}/details`);
   isToggled: boolean = false;
   imageTaken: boolean = false;
@@ -141,7 +135,7 @@ export class RegisterAccountDetailsPage {
       duration: 3000
     }).present();
 
-    this.navCtrl.setRoot('HomePage');
+    this.navCtrl.setRoot(TabsPage);
   }
 
   notify() {

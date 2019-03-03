@@ -2,37 +2,54 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FormBuilder, FormControl } from '@angular/forms';
 import * as firebase from 'firebase';
-import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+import { AngularFireList } from 'angularfire2/database';
 import { snapshotToArray } from "../../app/app.firebase.config";
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
-
 @IonicPage()
 @Component({
-  selector: 'page-account',
-  templateUrl: 'account.html',
+  selector: 'page-all-accounts',
+  templateUrl: 'all-accounts.html',
 })
-export class AccountPage {
+export class AllAccountsPage {
+
   base64Image: string = null;
   images: any = [];
   account = firebase.auth().currentUser;
   ref = firebase.database().ref(`accounts/${this.account.uid}/details`);
   imageTaken: boolean = false;
   imageURL: any;
-  items = [];
+  items: Array<{ route: string, itemKey: string, age: number, nickname: string, sex: string, country: string, image: string }> = [];
   refList: AngularFireList<any>;
   datas: Observable<any>;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder,
-    private camera: Camera, private alertCtrl: AlertController, private afDatabase: AngularFireDatabase) {
-    this.refList = this.afDatabase.list(`accounts/${this.account.uid}/details`);
-    this.datas = this.refList.snapshotChanges().map(changes => {
-      return changes.map(c => ({ key: c.payload.key, ...c.payload.val() }));
-    });
-    this.ref.on('value', resp => {
-      this.items = snapshotToArray(resp);
+    private camera: Camera, private alertCtrl: AlertController) {
+
+    var refAccounts = firebase.database().ref(`accounts`);
+    refAccounts.on('value', resp => {
+      let accounts = snapshotToArray(resp);
+
+      for (var key in accounts) {
+        for (var detailsKey in accounts[key].details) {
+          this.items[key] = { route: "", itemKey: "", age: 0, nickname: "", sex: "", country: "", image: "" };
+          this.items[key].route = accounts[key].key;
+          this.items[key].age = accounts[key].details[detailsKey].age;
+          console.log(accounts);
+          console.log(accounts[key]);
+          console.log("3: " + accounts[key].details);
+          console.log("4: " + accounts[key].details[detailsKey]);
+          console.log("5: " + accounts[key].details[detailsKey].key);
+          console.log("6: " + accounts[key].details.name);
+          this.items[key].itemKey = accounts[key].details[detailsKey].key;
+          this.items[key].nickname = accounts[key].details[detailsKey].nickname;
+          this.items[key].sex = accounts[key].details[detailsKey].sex;
+          this.items[key].country = accounts[key].details[detailsKey].country;
+          this.items[key].image = accounts[key].details[detailsKey].image;
+        }
+      }
     });
   }
 
@@ -65,7 +82,7 @@ export class AccountPage {
     return null;
   }
 
-  editImage(key) {
+  editImage(route, key) {
     let alert = this.alertCtrl.create({
       title: 'Edit Photo',
       buttons: [
@@ -87,16 +104,13 @@ export class AccountPage {
                 correctOrientation: true
               }
 
-              
-
               const result = await this.camera.getPicture(options);
 
               const image = `data:image/jpeg;base64,${result}`;
-              
-              var uploadTask = firebase.storage().ref(`pictures/${this.account.uid}`).child('myPhoto').putString(image, 'data_url');
 
-              uploadTask.on('state_changed', snapshot => {
+              var uploadTask = firebase.storage().ref('pictures/' + route).child('myPhoto').putString(image, 'data_url');
 
+              uploadTask.on('state_changed', function (snapshot) {
                 // Observe state change events such as progress, pause, and resume
                 // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                 var progress = (uploadTask.snapshot.bytesTransferred / uploadTask.snapshot.totalBytes) * 100;
@@ -116,7 +130,7 @@ export class AccountPage {
                 // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                 uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                   console.log('File available at: ', downloadURL);
-                  firebase.database().ref(`accounts/${this.account.uid}/details/` + key).update({ image: downloadURL });
+                  firebase.database().ref('pictures/' + route + '/details/' + key).update({ image: downloadURL });
                 });
               });
             } catch (e) {
@@ -127,7 +141,7 @@ export class AccountPage {
         {
           text: 'Delete',
           handler: () => {
-            firebase.database().ref(`accounts/${this.account.uid}/details/` + key).remove();
+            firebase.database().ref('pictures/' + route).remove();
           }
         }
       ]
@@ -135,7 +149,7 @@ export class AccountPage {
     alert.present();
   }
 
-  editAge(key) {
+  editAge(route, key) {
     let alert = this.alertCtrl.create({
       title: 'Edit Age',
       inputs: [
@@ -154,7 +168,7 @@ export class AccountPage {
           text: 'Edit',
           handler: data => {
             if (data.name !== undefined && data.name.length > 0 && data.name >= 18) {
-              firebase.database().ref(`accounts/${this.account.uid}/details/` + key).update({ age: data.name });
+              firebase.database().ref('accounts/' + route + '/details' + key).update({ age: data.name });
             }
           }
         }
@@ -163,7 +177,7 @@ export class AccountPage {
     alert.present();
   }
 
-  editSex(key) {
+  editSex(route, key) {
     let alert = this.alertCtrl.create({
       title: 'Edit Sex',
       inputs: [
@@ -195,7 +209,7 @@ export class AccountPage {
           text: 'Edit',
           handler: (data: String) => {
             if (data != "") {
-              firebase.database().ref(`accounts/${this.account.uid}/details/` + key).update({ sex: data });
+              firebase.database().ref('accounts/' + route + '/details' + key).update({ sex: data });
             }
           }
         }
@@ -204,7 +218,7 @@ export class AccountPage {
     alert.present();
   }
 
-  editCountry(key) {
+  editCountry(route, key) {
     let alert = this.alertCtrl.create({
       title: 'Edit Country',
       inputs: [
@@ -236,7 +250,7 @@ export class AccountPage {
           text: 'Edit',
           handler: (data: String) => {
             if (data != "") {
-              firebase.database().ref(`accounts/${this.account.uid}/details/` + key).update({ country: data });
+              firebase.database().ref('accounts/' + route + '/details' + key).update({ country: data });
             }
           }
         }
@@ -245,7 +259,7 @@ export class AccountPage {
     alert.present();
   }
 
-  editName(key) {
+  editName(route, key) {
     let alert = this.alertCtrl.create({
       title: 'Edit Nickname',
       inputs: [
@@ -264,7 +278,7 @@ export class AccountPage {
           text: 'Edit',
           handler: data => {
             if (data.name !== undefined && data.name.length > 0) {
-              firebase.database().ref(`accounts/${this.account.uid}/details/` + key).update({ nickname: data.name });
+              firebase.database().ref('accounts/' + route + '/details' + key).update({ nickname: data.name });
             }
           }
         }
@@ -272,5 +286,8 @@ export class AccountPage {
     });
     alert.present();
   }
+
+
+
 
 }

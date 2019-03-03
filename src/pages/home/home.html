@@ -21,8 +21,12 @@
       </ion-item>
     </ion-item>
   </ion-list>
-  <button ion-button (click)="accountDetails()">Account Details</button>
+  <!-- <button ion-button (click)="accountDetails()">Account Details</button> -->
   <button ion-button (click)="annoucements()">Annoucements</button>
+  <div id="btnAdmin">
+    <!-- <ion-input [(ngModel)]="inputText" placeholder="Item name"></ion-input> -->
+    <button ion-button full (click)="goAllAccounts()">All Accounts</button>
+  </div>
   <button ion-button (click)="logout(user)">Logout</button>
   <button ion-button (click)="deleteAccount()">Delete Account</button>
   <a type="aplication/rss+xml" href="../../assets/XML.xml">

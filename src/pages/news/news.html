@@ -9,8 +9,8 @@
 
 <ion-content padding>
   <div id="btnAdmin">
-  <ion-input [(ngModel)]="inputText" placeholder="Item name"></ion-input>
-  <button ion-button full (click)="addItem({name:inputText})">Add</button>
+    <ion-input [(ngModel)]="inputText" placeholder="Item name"></ion-input>
+    <button ion-button full (click)="addItem({name:inputText})">Add</button>
   </div>
   <ion-list>
     <ion-item *ngFor="let item of items" (click)="editItem(item.key)">

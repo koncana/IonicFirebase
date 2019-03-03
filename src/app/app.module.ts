@@ -13,10 +13,18 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { Camera } from '@ionic-native/camera';
 import { ImagePicker } from '@ionic-native/image-picker';
+import { TabsPage } from '../pages/tabs/tabs';
+import { AccountPage } from '../pages/account/account';
+import { NewsPage } from '../pages/news/news';
+import { HomePage } from '../pages/home/home';
 
 @NgModule({
   declarations: [
-    MyApp
+    MyApp,
+    TabsPage,
+    AccountPage,
+    NewsPage,
+    HomePage
   ],
   imports: [
     BrowserModule,
@@ -28,7 +36,11 @@ import { ImagePicker } from '@ionic-native/image-picker';
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    MyApp
+    MyApp,
+    TabsPage,
+    AccountPage,
+    NewsPage,
+    HomePage
   ],
   providers: [
     StatusBar,

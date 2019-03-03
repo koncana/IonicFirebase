@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from '../../models/user';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { TabsPage } from '../tabs/tabs';
 
 @IonicPage()
 @Component({
@@ -24,11 +25,7 @@ export class LoginPage {
     try {
       const result = await this.afAuth.auth.signInWithEmailAndPassword(this.myForm.value.email, this.myForm.value.password);
       if (result) {
-        // if (this.myForm.value.email === "admin@admin.com") {
-        //   this.navCtrl.setRoot('AdminPage');
-        // } else {
-          this.navCtrl.setRoot('HomePage');
-        //}
+          this.navCtrl.setRoot(TabsPage);
       }
     } catch (e) {
       this.toast.create({

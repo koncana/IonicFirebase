@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from '../../models/user';
 import { AngularFireAuth } from 'angularfire2/auth';
-import * as firebase from 'firebase';
 
 @IonicPage()
 @Component({
@@ -25,8 +24,8 @@ export class RegisterPage {
   async register() {
     try {
       const result = await this.afAuth.auth.createUserWithEmailAndPassword(this.myForm.value.email, this.myForm.value.password);
-      const resultSignIn = await this.afAuth.auth.signInWithEmailAndPassword(this.myForm.value.email, this.myForm.value.password);
-      if (resultSignIn) {
+      //const resultSignIn = await this.afAuth.auth.signInWithEmailAndPassword(this.myForm.value.email, this.myForm.value.password);
+      if (result) {
         this.toast.create({
           message: `Register succesful`,
           duration: 3000

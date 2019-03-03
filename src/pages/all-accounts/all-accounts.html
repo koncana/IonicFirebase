@@ -1,0 +1,43 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>All Accounts</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-item-sliding *ngFor="let item of items">
+      <ion-item (click)="editName(item.route, item.key)">
+        Key:
+        <br>
+        {{item.route}}
+      </ion-item>
+      <ion-item (click)="editName(item.route, item.key)">
+        Nickname: {{item.nickname}}
+        <br>
+        {{item.key}}
+      </ion-item>
+      <ion-item (click)="editAge(item.route, item.key)">
+        Age: {{item.age}}
+      </ion-item>
+      <ion-item (click)="editSex(item.route, item.key)">
+        Sex: {{item.sex}}
+      </ion-item>
+      <ion-item (click)="editCountry(item.route, item.key)">
+        Country: {{item.country}}
+      </ion-item>
+      <ion-item (click)="editImage(item.route, item.key)">
+        Profile image:
+        <br>
+        <img src={{item.image}} />
+      </ion-item>
+      <button ion-button (click)="addNote(item.key)">Add Note</button>
+      <button ion-button (click)="deleteAccount(item.key)">Delete Account</button>
+      <br>
+      <br>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>
